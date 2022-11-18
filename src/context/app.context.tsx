@@ -1,6 +1,7 @@
 import { createContext, PropsWithChildren, useEffect, useState } from "react";
 import { TableData } from "../interfaces/data.interface";
 import mockData from "../mockData";
+import { API, fetchApiData } from "../api/api";
 
 export interface IAppContext {
   data: TableData[];
@@ -24,7 +25,14 @@ export const AppContextProvider = ({
   const [dataState, setDataState] = useState<TableData[]>(data);
   const [formState, setFormState] = useState<boolean>(false);
   useEffect(() => {
-    setDataState(mockData);
+    fetchApiData(API.getTreeRows.method, API.getTreeRows.url).then(
+      (response) => {
+        if (response) {
+          setDataState(response);
+        }
+      }
+    );
+    // setDataState(mockData);
   }, []);
   const iterateData = (
     data: TableData[],
@@ -57,42 +65,60 @@ export const AppContextProvider = ({
       return true;
     });
   };
-  const addRow = (rowData: TableData, parentId: number | null) => {
+  const addRow = async (rowData: TableData, parentId: number | null) => {
     let newDataState = [] as TableData[];
     // for local
     // *********
-    const min = Math.ceil(4000);
-    const max = Math.floor(5000);
-    const newId = Math.floor(Math.random() * (max - min) + min);
-    rowData = { ...rowData, id: newId };
+    // const min = Math.ceil(4000);
+    // const max = Math.floor(5000);
+    // const newId = Math.floor(Math.random() * (max - min) + min);
+    // rowData = { ...rowData, id: newId };
     // *********
+    rowData = { ...rowData, parentId: parentId };
+    const fetchedRow = await fetchApiData(
+      API.createRowInEntity.method,
+      API.createRowInEntity.url,
+      JSON.stringify(rowData)
+    );
     if (parentId) {
       newDataState = iterateData(dataState, parentId, (row: TableData) => {
         // make api call
         if (row.child) {
-          row.child.push(rowData);
+          row.child.push(fetchedRow);
         } else {
-          row = { ...row, child: [rowData] };
+          row = { ...row, child: [fetchedRow] };
         }
         return row;
       });
     } else {
-      newDataState = [...dataState, rowData];
+      newDataState = [...dataState, fetchedRow];
     }
     setDataState(newDataState);
     setFormState(false);
   };
-  const editRow = (rowData: TableData, rowId: number) => {
-    const newDataState = iterateData(dataState, rowId, (row: TableData) => {
-      return rowData;
-    });
-
-    setDataState(newDataState);
+  const editRow = async (rowData: TableData, rowId: number) => {
+    const fetchedRow = await fetchApiData(
+      API.updateRow.method,
+      API.updateRow.url(rowId),
+      JSON.stringify(rowData)
+    );
+    if (fetchedRow.current) {
+      const newDataState = iterateData(dataState, rowId, (row: TableData) => {
+        return fetchedRow;
+      });
+      setDataState(newDataState);
+    }
     setFormState(false);
   };
-  const deleteRow = (rowId: number) => {
-    const newDataState = filterData(dataState, rowId);
-    setDataState(newDataState);
+  const deleteRow = async (rowId: number) => {
+    const response = await fetchApiData(
+      API.deleteRow.method,
+      API.deleteRow.url(rowId)
+    );
+    if (response) {
+      const newDataState = filterData(dataState, rowId);
+      setDataState(newDataState);
+    }
   };
   const toggleForm = (value: boolean) => {
     setFormState(value);
