@@ -1,15 +1,16 @@
 export interface TableData {
-  id: number;
+  id: number | null;
   rowName: string;
-  total: number;
+  total?: number;
   salary: number;
-  mimExploitation: number;
-  machineOperatorSalary: number;
+  mimExploitation?: number;
+  machineOperatorSalary?: number;
   materials: number;
   mainCosts: number;
-  supportCosts: number;
-  equipmentCosts: number;
-  overheads: number;
-  estimatedProfit: number;
-  child: TableData[];
+  supportCosts?: number;
+  equipmentCosts?: number;
+  overheads?: number;
+  estimatedProfit?: number;
+  parentId?: number | null;
+  child?: TableData[];
 }

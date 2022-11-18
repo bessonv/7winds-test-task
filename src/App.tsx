@@ -1,4 +1,6 @@
-import "./styles.scss";
+import "./styles.sass";
+import { AppContextProvider, IAppContext } from "./context/app.context";
+import Table from "./components/Table/Table";
 
 const eID = {
   id: 21526,
@@ -7,10 +9,12 @@ const eID = {
 
 export default function App(): JSX.Element {
   return (
-    <>
-      <header>header</header>
-      <div>sidebar</div>
-      <table></table>
-    </>
+    <AppContextProvider data={[]} isFormOppend={false}>
+      <div>
+        <header>header</header>
+        <div>sidebar</div>
+        <Table />
+      </div>
+    </AppContextProvider>
   );
 }
