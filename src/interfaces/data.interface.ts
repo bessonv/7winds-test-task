@@ -14,3 +14,18 @@ export interface TableData {
   parentId?: number | null;
   child?: TableData[];
 }
+
+export interface AddResponse {
+  changed: TableData[];
+  current: TableData;
+}
+
+export interface EditResponse {
+  changed: TableData[];
+  current: TableData;
+}
+
+export interface DeleteResponse {
+  changed: TableData[];
+  current: TableData | null;
+}

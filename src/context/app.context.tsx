@@ -1,5 +1,5 @@
 import { createContext, PropsWithChildren, useEffect, useState } from "react";
-import { TableData } from "../interfaces/data.interface";
+import { TableData, AddResponse, EditResponse, DeleteResponse } from "../interfaces/data.interface";
 import mockData from "../mockData";
 import { API, fetchApiData } from "../api/api";
 
@@ -26,13 +26,12 @@ export const AppContextProvider = ({
   const [formState, setFormState] = useState<boolean>(false);
   useEffect(() => {
     fetchApiData(API.getTreeRows.method, API.getTreeRows.url).then(
-      (response) => {
+      (response: TableData[]) => {
         if (response) {
           setDataState(response);
         }
       }
     );
-    // setDataState(mockData);
   }, []);
   const iterateData = (
     data: TableData[],
@@ -46,7 +45,7 @@ export const AppContextProvider = ({
         const children: TableData[] = iterateData(e.child, rowId, (c) => {
           return callback(c);
         });
-        return { ...e, child: children } as TableData;
+        return { ...e, child: children };
       } else {
         return e;
       }
@@ -65,60 +64,69 @@ export const AppContextProvider = ({
       return true;
     });
   };
+  const updateData = (newData: TableData[]) => {
+    for(const el of newData) {
+      if (!el.id) return el;
+      const updatedData = iterateData(dataState, el.id, (row: TableData) => {
+        return { ...row, ...el };
+      });
+
+      setDataState(updatedData);
+    }
+  }
   const addRow = async (rowData: TableData, parentId: number | null) => {
-    let newDataState = [] as TableData[];
-    // for local
-    // *********
-    // const min = Math.ceil(4000);
-    // const max = Math.floor(5000);
-    // const newId = Math.floor(Math.random() * (max - min) + min);
-    // rowData = { ...rowData, id: newId };
-    // *********
+    let newDataState = [];
     rowData = { ...rowData, parentId: parentId };
-    const fetchedRow = await fetchApiData(
+    const response: AddResponse = await fetchApiData(
       API.createRowInEntity.method,
       API.createRowInEntity.url,
       JSON.stringify(rowData)
     );
+    console.log(response);
+    if (!response.current) {
+      return setFormState(false);
+    }
     if (parentId) {
       newDataState = iterateData(dataState, parentId, (row: TableData) => {
-        // make api call
         if (row.child) {
-          row.child.push(fetchedRow);
+          row.child.push(response.current);
         } else {
-          row = { ...row, child: [fetchedRow] };
+          row = { ...row, child: [response.current] };
         }
         return row;
       });
     } else {
-      newDataState = [...dataState, fetchedRow];
+      newDataState = [...dataState, response.current];
     }
     setDataState(newDataState);
+    updateData(response.changed);
     setFormState(false);
   };
   const editRow = async (rowData: TableData, rowId: number) => {
-    const fetchedRow = await fetchApiData(
+    const response: EditResponse = await fetchApiData(
       API.updateRow.method,
       API.updateRow.url(rowId),
       JSON.stringify(rowData)
     );
-    if (fetchedRow.current) {
+    console.log(response);
+    if (response.current) {
       const newDataState = iterateData(dataState, rowId, (row: TableData) => {
-        return fetchedRow;
+        return { ...row, ...response.current };
       });
       setDataState(newDataState);
+      updateData(response.changed);
     }
     setFormState(false);
   };
   const deleteRow = async (rowId: number) => {
-    const response = await fetchApiData(
+    const response: DeleteResponse = await fetchApiData(
       API.deleteRow.method,
       API.deleteRow.url(rowId)
     );
-    if (response) {
-      const newDataState = filterData(dataState, rowId);
-      setDataState(newDataState);
-    }
+    console.log(response);
+    const newDataState = filterData(dataState, rowId);
+    setDataState(newDataState);
+    updateData(response.changed);
   };
   const toggleForm = (value: boolean) => {
     setFormState(value);

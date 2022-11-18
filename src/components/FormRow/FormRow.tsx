@@ -38,7 +38,7 @@ export default function FormRow({
     };
   }, []);
   const handleChange = (
-    key: keyof TableData,
+    key: string,
     e: ChangeEvent<HTMLInputElement>
   ) => {
     setFormData({ ...formData, [key]: e.target.value });

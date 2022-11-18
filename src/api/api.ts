@@ -2,7 +2,7 @@ const eID = {
   id: 21526,
   rowName: "31c13086-3da7-453b-9a2c-d2f26250d681"
 };
-const API_URL = `http://185.244.172.108:8081/v1​/outlay-rows​/entity​/${eID.id}​/row​`;
+const API_URL = `http://185.244.172.108:8081/v1/outlay-rows/entity/${eID.id}/row`;
 export const API = {
   getTreeRows: {
     method: "GET",
