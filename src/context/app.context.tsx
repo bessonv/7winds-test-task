@@ -64,10 +64,10 @@ export const AppContextProvider = ({
       return true;
     });
   };
-  const updateData = (newData: TableData[]) => {
+  const updateData = (newData: TableData[], stateData: TableData[]) => {
     for(const el of newData) {
       if (!el.id) return el;
-      const updatedData = iterateData(dataState, el.id, (row: TableData) => {
+      const updatedData = iterateData(stateData, el.id, (row: TableData) => {
         return { ...row, ...el };
       });
 
@@ -98,8 +98,7 @@ export const AppContextProvider = ({
     } else {
       newDataState = [...dataState, response.current];
     }
-    setDataState(newDataState);
-    updateData(response.changed);
+    updateData(response.changed, newDataState);
     setFormState(false);
   };
   const editRow = async (rowData: TableData, rowId: number) => {
@@ -113,8 +112,7 @@ export const AppContextProvider = ({
       const newDataState = iterateData(dataState, rowId, (row: TableData) => {
         return { ...row, ...response.current };
       });
-      setDataState(newDataState);
-      updateData(response.changed);
+      updateData(response.changed, newDataState);
     }
     setFormState(false);
   };
@@ -125,8 +123,7 @@ export const AppContextProvider = ({
     );
     console.log(response);
     const newDataState = filterData(dataState, rowId);
-    setDataState(newDataState);
-    updateData(response.changed);
+    updateData(response.changed, newDataState);
   };
   const toggleForm = (value: boolean) => {
     setFormState(value);
