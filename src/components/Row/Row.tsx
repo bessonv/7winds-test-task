@@ -11,7 +11,7 @@ export default function Row({
   showEditForm
 }: RowProps): JSX.Element {
   const { id, rowName, salary, materials, mainCosts, estimatedProfit } = data;
-  const { deleteRow, isHidden, hideIcons: hideIcons } = useContext(AppContext);
+  const { deleteRow, isHidden, hideIcons } = useContext(AppContext);
 
   return (
     <tr
@@ -22,36 +22,40 @@ export default function Row({
         onMouseEnter={() => hideIcons && hideIcons(false)}
         className="table-row__level"
       >
-        {nestLevel < 3 && (
-          <>
-            {nestLevel === 1 && 
+        <div 
+          className={`table-row__icons ${!isHidden ? 'table-row__icons_show-container' : ''}`}
+        >
+          {nestLevel < 3 && (
+            <>
+              {nestLevel === 1 && 
+                <Icon
+                  handler={() => showAddForm && showAddForm(null)}
+                  type={'first-folder'}
+                  className="table-row__first-folder" />}
               <Icon
-                handler={() => showAddForm && showAddForm(null)}
-                type={'first-folder'}
-                className="table-row__first-folder" />}
-            <Icon
-              handler={() => showAddForm && showAddForm(id)}
-              type={'second-folder'}
-              hidden={nestLevel === 2 ? false : isHidden}
-              className="table-row__second-folder" />
-          </>
-        )}
-        <Icon
-          handler={() => {}}
-          type={'file'}
-          hidden={nestLevel === 3 ? false : isHidden}
-          className="table-row__file-icon " />
-        <Icon
-          handler={() => deleteRow && id && deleteRow(id)}
-          type={'delete'}
-          hidden={isHidden}
-          className="table-row__delete-icon" />
+                handler={() => showAddForm && showAddForm(id)}
+                type={'second-folder'}
+                hidden={nestLevel === 2 ? false : isHidden}
+                className="table-row__second-folder" />
+            </>
+          )}
+          <Icon
+            handler={() => {}}
+            type={'file'}
+            hidden={nestLevel === 3 ? false : isHidden}
+            className="table-row__file-icon " />
+          <Icon
+            handler={() => deleteRow && id && deleteRow(id)}
+            type={'delete'}
+            hidden={isHidden}
+            className="table-row__delete-icon" />
+        </div>
       </td>
-      <td className="talbe-row__name">{rowName}</td>
-      <td className="talbe-row__salary">{salary}</td>
-      <td className="talbe-row__materials">{materials}</td>
-      <td className="talbe-row__coasts">{mainCosts}</td>
-      <td className="talbe-row__profit">{estimatedProfit}</td>
+      <td className="table-row__name">{rowName}</td>
+      <td className="table-row__salary">{salary}</td>
+      <td className="table-row__materials">{materials}</td>
+      <td className="table-row__coasts">{mainCosts}</td>
+      <td className="table-row__profit">{estimatedProfit}</td>
     </tr>
   );
 }

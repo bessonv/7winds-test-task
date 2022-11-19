@@ -1,4 +1,5 @@
 import FormRowProps from "./FormRow.types";
+import './FormRow.style.sass';
 import { TableData } from "../../interfaces/data.interface";
 import { useContext, useState, ChangeEvent, useEffect } from "react";
 import { AppContext } from "../../context/app.context";

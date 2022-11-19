@@ -64,14 +64,19 @@ export default function Table({ tdata }: TableProps): JSX.Element {
     );
   };
   return (
-    <table className="table" onMouseLeave={() => hideIcons && hideIcons(true)}>
-      <tr className="table__header">
-        {headers.map((header) => (
-          <th>{header}</th>
-        ))}
-      </tr>
-      {data.length > 0 ? renderRows(data, 1) : <FormRow />}
-      {shouldShowAddForm(null) && <FormRow />}
-    </table>
+    <div className="table">
+      <header className="table__header">Строительно-монтажные работы</header>
+      <div className="table__content">
+        <table onMouseLeave={() => hideIcons && hideIcons(true)}>
+          <tr className="table__head">
+            {headers.map((header) => (
+              <th>{header}</th>
+            ))}
+          </tr>
+          {data.length > 0 ? renderRows(data, 1) : <FormRow />}
+          {shouldShowAddForm(null) && <FormRow />}
+        </table>
+      </div>
+    </div>
   );
 }
