@@ -1,2 +1,17 @@
 # 7winds-test-task
-Created with CodeSandbox
+
+## Instruments used:
+* React.js
+* SASS
+* Context API
+* Create-React-App
+
+## Building
+```
+  npm run build
+```
+
+## Dev
+```
+  npm run start
+```
