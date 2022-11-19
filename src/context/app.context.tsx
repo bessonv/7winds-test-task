@@ -65,6 +65,9 @@ export const AppContextProvider = ({
     });
   };
   const updateData = (newData: TableData[], stateData: TableData[]) => {
+    if (newData.length == 0) {
+      return setDataState(stateData);
+    }
     for(const el of newData) {
       if (!el.id) return el;
       const updatedData = iterateData(stateData, el.id, (row: TableData) => {
