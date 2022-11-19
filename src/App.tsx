@@ -5,7 +5,7 @@ import SideBar from "./components/Sidebar/Sidebar";
 
 export default function App(): JSX.Element {
   return (
-    <AppContextProvider data={[]} isFormOppend={false}>
+    <AppContextProvider data={[]} isFormOppend={false} isHidden={true}>
       <div>
         <header>header</header>
         <SideBar />

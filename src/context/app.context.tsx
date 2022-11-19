@@ -6,15 +6,18 @@ import { API, fetchApiData } from "../api/api";
 export interface IAppContext {
   data: TableData[];
   isFormOppend: boolean;
+  isHidden: boolean;
   addRow?: (rowData: TableData, parentId: number | null) => void;
   editRow?: (rowData: TableData, rowId: number) => void;
   deleteRow?: (rowId: number) => void;
   toggleForm?: (value: boolean) => void;
+  hideIcons?: (value: boolean) => void;
 }
 
 export const AppContext = createContext<IAppContext>({
   data: [],
-  isFormOppend: false
+  isFormOppend: false,
+  isHidden: true
 });
 
 export const AppContextProvider = ({
@@ -24,6 +27,7 @@ export const AppContextProvider = ({
 }: PropsWithChildren<IAppContext>): JSX.Element => {
   const [dataState, setDataState] = useState<TableData[]>(data);
   const [formState, setFormState] = useState<boolean>(false);
+  const [isIconsHidden, setIconsHidden] = useState<boolean>(true);
   useEffect(() => {
     fetchApiData(API.getTreeRows.method, API.getTreeRows.url).then(
       (response: TableData[]) => {
@@ -131,15 +135,20 @@ export const AppContextProvider = ({
   const toggleForm = (value: boolean) => {
     setFormState(value);
   };
+  const hideIcons = (value: boolean) => {
+    setIconsHidden(value);
+  }
   return (
     <AppContext.Provider
       value={{
         data: dataState,
         isFormOppend: formState,
+        isHidden: isIconsHidden,
         addRow,
         editRow,
         deleteRow,
-        toggleForm
+        toggleForm,
+        hideIcons
       }}
     >
       {children}

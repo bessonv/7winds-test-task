@@ -1,4 +1,5 @@
 import TableProps from "./Table.types";
+import './Table.style.sass';
 import { TableData } from "../../interfaces/data.interface";
 import Row from "../Row/Row";
 import FormRow from "../FormRow/FormRow";
@@ -15,7 +16,7 @@ const headers = [
 ];
 
 export default function Table({ tdata }: TableProps): JSX.Element {
-  const { data, isFormOppend, toggleForm } = useContext(AppContext);
+  const { data, isFormOppend, toggleForm, hideIcons } = useContext(AppContext);
   const [currentId, setCurrentId] = useState<[number | null, string]>([
     null,
     ""
@@ -63,13 +64,14 @@ export default function Table({ tdata }: TableProps): JSX.Element {
     );
   };
   return (
-    <table>
-      <tr>
+    <table className="table" onMouseLeave={() => hideIcons && hideIcons(true)}>
+      <tr className="table__header">
         {headers.map((header) => (
           <th>{header}</th>
         ))}
       </tr>
       {data.length > 0 ? renderRows(data, 1) : <FormRow />}
+      {shouldShowAddForm(null) && <FormRow />}
     </table>
   );
 }

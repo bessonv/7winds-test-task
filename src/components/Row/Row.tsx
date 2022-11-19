@@ -1,6 +1,8 @@
 import { useContext } from "react";
+import './Row.style.sass';
 import { AppContext } from "../../context/app.context";
 import RowProps from "./Row.types";
+import Icon from "../Icon/Icon";
 
 export default function Row({
   data,
@@ -8,26 +10,42 @@ export default function Row({
   showAddForm,
   showEditForm
 }: RowProps): JSX.Element {
-  const { rowName, salary, materials, mainCosts, estimatedProfit } = data;
-  const { deleteRow } = useContext(AppContext);
+  const { id, rowName, salary, materials, mainCosts, estimatedProfit } = data;
+  const { deleteRow, isHidden, hideIcons: hideIcons } = useContext(AppContext);
 
   return (
     <tr
       className="table-row"
-      onDoubleClick={() => showEditForm && data.id && showEditForm(data.id)}
+      onDoubleClick={() => id && showEditForm && showEditForm(id)}
     >
-      <td className="table-row__level">
+      <td
+        onMouseEnter={() => hideIcons && hideIcons(false)}
+        className="table-row__level"
+      >
         {nestLevel < 3 && (
-          <button onClick={() => showAddForm && showAddForm(data.id)}>a</button>
+          <>
+            {nestLevel === 1 && 
+              <Icon
+                handler={() => showAddForm && showAddForm(null)}
+                type={'first-folder'}
+                className="table-row__first-folder" />}
+            <Icon
+              handler={() => showAddForm && showAddForm(id)}
+              type={'second-folder'}
+              hidden={nestLevel === 2 ? false : isHidden}
+              className="table-row__second-folder" />
+          </>
         )}
-        <button
-          onClick={() => showEditForm && data.id && showEditForm(data.id)}
-        >
-          e
-        </button>
-        <button onClick={() => deleteRow && data.id && deleteRow(data.id)}>
-          d
-        </button>
+        <Icon
+          handler={() => {}}
+          type={'file'}
+          hidden={nestLevel === 3 ? false : isHidden}
+          className="table-row__file-icon " />
+        <Icon
+          handler={() => deleteRow && id && deleteRow(id)}
+          type={'delete'}
+          hidden={isHidden}
+          className="table-row__delete-icon" />
       </td>
       <td className="talbe-row__name">{rowName}</td>
       <td className="talbe-row__salary">{salary}</td>
