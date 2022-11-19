@@ -46,7 +46,7 @@ export default function Table({ tdata }: TableProps): JSX.Element {
         {rows.map((row) => (
           <>
             {shouldShowEditForm(row.id) ? (
-              <FormRow data={row} />
+              <FormRow key={row.id} data={row} />
             ) : (
               <Row
                 nestLevel={nestLevel}
@@ -57,7 +57,7 @@ export default function Table({ tdata }: TableProps): JSX.Element {
               />
             )}
             {row.child && renderRows(row.child, nestLevel + 1)}
-            {shouldShowAddForm(row.id) && <FormRow parentId={row.id} />}
+            {shouldShowAddForm(row.id) && <FormRow key={row.id+'new'} parentId={row.id} />}
           </>
         ))}
       </>
@@ -69,8 +69,8 @@ export default function Table({ tdata }: TableProps): JSX.Element {
       <div className="table__content">
         <table onMouseLeave={() => hideIcons && hideIcons(true)}>
           <tr className="table__head">
-            {headers.map((header) => (
-              <th>{header}</th>
+            {headers.map((header, index) => (
+              <th key={index}>{header}</th>
             ))}
           </tr>
           {data.length > 0 ? renderRows(data, 1) : <FormRow />}
